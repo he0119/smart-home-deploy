@@ -1,0 +1,108 @@
+version: "3"
+services:
+  nginx:
+    build: ./nginx
+    image: he0119/nginx:1.18.0-alpine
+    container_name: nginx
+    labels:
+      - sh.acme.autoload.domain=hehome.xyz
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./blog/typecho:/app/typecho
+      - ./smart-home/static:/app/smart-home/static
+      - ./smart-home/web:/app/smart-home/web
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - php
+      - smart-home
+  nginx-logrotate:
+    image: he0119/nginx:1.18.0-alpine
+    command: crond -f
+    container_name: nginx-logrotate
+    restart: always
+    volumes:
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - nginx
+  acme.sh:
+    image: neilpang/acme.sh
+    container_name: acme.sh
+    restart: always
+    command: daemon
+    volumes:
+      - ./acme.sh/acmeout:/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=hehome.xyz
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE="/etc/nginx/ssl/hehome.xyz.key"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/etc/nginx/ssl/fullchain.cer"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="nginx -s reload"
+    depends_on:
+      - nginx
+  php:
+    build: ./blog/php
+    image: he0119/php:7.4.8-fpm-alpine
+    container_name: php
+    user: 500:500
+    restart: always
+    volumes:
+      - ./blog/typecho:/app/typecho
+      - ./blog/php/php.ini:/usr/local/etc/php/php.ini:ro
+  smart-home:
+    image: he0119/smart-home:v0.5.2
+    container_name: smart-home
+    restart: always
+    user: 500:500
+    volumes:
+      - ./smart-home/static:/usr/src/app/static
+      - ./smart-home/logs:/usr/src/app/logs
+    env_file:
+      - ./smart-home/.env
+    depends_on:
+      - db
+      - emqx
+      - redis
+  celery:
+    image: he0119/smart-home:v0.5.2
+    command: celery -A home worker --beat -l info
+    container_name: celery
+    restart: always
+    user: 500:500
+    volumes:
+      - ./smart-home/logs:/usr/src/app/logs
+    env_file:
+      - ./smart-home/.env
+    depends_on:
+      - redis
+  db:
+    build: ./smart-home/docker/postgres
+    image: he0119/postgres:12.3
+    container_name: postgres
+    restart: always
+    volumes:
+      - ./smart-home/docker/postgres/pgdata:/var/lib/postgresql/data
+    env_file:
+      - ./smart-home/.env
+  redis:
+    image: redis:6.0.5-alpine
+    container_name: redis
+    restart: always
+  emqx:
+    image: emqx/emqx:v4.1.2-alpine-amd64
+    container_name: emqx
+    restart: always
+    ports:
+      - "1883:1883"
+    env_file:
+      - ./smart-home/docker/emqx/configuration.env
+      - ./smart-home/.env
+networks:
+  default:
+    external:
+      name: website
