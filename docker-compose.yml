@@ -63,7 +63,7 @@ services:
       - ./smart-home/static:/usr/src/app/static
       - ./smart-home/logs:/usr/src/app/logs
     env_file:
-      - ./smart-home/.env
+      - ./.env
     depends_on:
       - db
       - emqx
@@ -77,7 +77,7 @@ services:
     volumes:
       - ./smart-home/logs:/usr/src/app/logs
     env_file:
-      - ./smart-home/.env
+      - ./.env
     depends_on:
       - redis
   db:
@@ -88,7 +88,7 @@ services:
     volumes:
       - ./smart-home/docker/postgres/pgdata:/var/lib/postgresql/data
     env_file:
-      - ./smart-home/.env
+      - ./.env
   redis:
     image: redis:6.0.5-alpine
     container_name: redis
@@ -101,7 +101,7 @@ services:
       - "1883:1883"
     env_file:
       - ./smart-home/docker/emqx/configuration.env
-      - ./smart-home/.env
+      - ./.env
 networks:
   default:
     external:

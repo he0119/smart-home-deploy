@@ -11,3 +11,11 @@
 ```shell
 sudo docker network create website
 ```
+
+### 配置
+
+```shell
+# 填写配置文件
+cp .example.env .env
+vi .env
+```
