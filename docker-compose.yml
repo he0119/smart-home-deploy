@@ -2,7 +2,7 @@ version: "3"
 services:
   nginx:
     build: ./nginx
-    image: he0119/nginx:1.18.0-alpine
+    image: he0119/nginx:1.19.3-alpine
     container_name: nginx
     labels:
       - sh.acme.autoload.domain=hehome.xyz
@@ -21,15 +21,6 @@ services:
     depends_on:
       - php
       - smart-home
-  nginx-logrotate:
-    image: he0119/nginx:1.18.0-alpine
-    command: crond -f
-    container_name: nginx-logrotate
-    restart: always
-    volumes:
-      - ./nginx/logs:/var/log/nginx
-    depends_on:
-      - nginx
   acme.sh:
     image: neilpang/acme.sh
     container_name: acme.sh
