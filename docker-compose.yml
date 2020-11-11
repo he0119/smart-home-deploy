@@ -7,8 +7,8 @@ services:
     labels:
       - sh.acme.autoload.domain=hemengyang.tk
     ports:
-      - "80:80"
-      - "443:443"
+      - "5000:5000"
+      - "5001:5001"
     restart: always
     volumes:
       - ./blog/typecho:/app/typecho
@@ -75,6 +75,8 @@ services:
     build: ./smart-home/docker/postgres
     image: he0119/postgres:12.3
     container_name: postgres
+    ports:
+      - "5432:5432"
     restart: always
     volumes:
       - ./smart-home/docker/postgres/pgdata:/var/lib/postgresql/data
@@ -83,6 +85,8 @@ services:
   redis:
     image: redis:6.0.5-alpine
     container_name: redis
+    ports:
+      - "6379:6379"
     restart: always
   emqx:
     image: emqx/emqx:v4.1.2-alpine-amd64
