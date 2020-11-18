@@ -72,12 +72,12 @@ services:
     depends_on:
       - redis
   db:
-    build: ./smart-home/docker/postgres
+    build: ./postgres
     image: he0119/postgres:12.3
     container_name: postgres
     restart: always
     volumes:
-      - ./smart-home/docker/postgres/pgdata:/var/lib/postgresql/data
+      - ./postgres/pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env
   redis:
@@ -91,7 +91,7 @@ services:
     ports:
       - "1883:1883"
     env_file:
-      - ./smart-home/docker/emqx/configuration.env
+      - ./emqx/configuration.env
       - ./.env
 networks:
   default:
