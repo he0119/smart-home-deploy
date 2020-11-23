@@ -2,7 +2,7 @@ version: "3"
 services:
   nginx:
     build: ./nginx
-    image: he0119/nginx:1.19.3-alpine
+    image: he0119/nginx:1.19.4-alpine
     container_name: nginx
     labels:
       - sh.acme.autoload.domain=hehome.xyz
@@ -38,7 +38,7 @@ services:
       - nginx
   php:
     build: ./blog/php
-    image: he0119/php:7.4.8-fpm-alpine
+    image: he0119/php:7.4.12-fpm-alpine
     container_name: php
     user: 500:500
     restart: always
@@ -81,7 +81,7 @@ services:
     env_file:
       - ./.env
   redis:
-    image: redis:6.0.5-alpine
+    image: redis:6.0.9-alpine
     container_name: redis
     restart: always
   emqx:
