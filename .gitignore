@@ -20,3 +20,6 @@ smart-home/web
 
 # 数据库
 smart-home/docker/postgres/pgdata
+
+# 测试服务器
+nginx/sites/smart_test.conf

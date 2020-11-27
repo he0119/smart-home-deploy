@@ -2,7 +2,7 @@ version: "3"
 services:
   nginx:
     build: ./nginx
-    image: he0119/nginx:1.19.3-alpine
+    image: he0119/nginx:1.19.4-alpine
     container_name: nginx
     labels:
       - sh.acme.autoload.domain=hemengyang.tk
@@ -38,7 +38,7 @@ services:
       - nginx
   php:
     build: ./blog/php
-    image: he0119/php:7.4.8-fpm-alpine
+    image: he0119/php:7.4.12-fpm-alpine
     container_name: php
     user: 1000:1000
     restart: always
@@ -72,14 +72,14 @@ services:
     depends_on:
       - redis
   db:
-    build: ./smart-home/docker/postgres
+    build: ./postgres
     image: he0119/postgres:12.3
     container_name: postgres
     ports:
       - "5432:5432"
     restart: always
     volumes:
-      - ./smart-home/docker/postgres/pgdata:/var/lib/postgresql/data
+      - ./postgres/pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env
   redis:
@@ -97,7 +97,7 @@ services:
       - "1883:1883"
       - "8883:8883"
     env_file:
-      - ./smart-home/docker/emqx/configuration.env
+      - ./emqx/configuration.env
       - ./.env
 networks:
   default:
