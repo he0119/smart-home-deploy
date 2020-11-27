@@ -40,7 +40,7 @@ services:
     build: ./blog/php
     image: he0119/php:7.4.8-fpm-alpine
     container_name: php
-    user: 1001:1001
+    user: 1000:1000
     restart: always
     volumes:
       - ./blog/typecho:/app/typecho
@@ -49,7 +49,7 @@ services:
     image: he0119/smart-home:test
     container_name: smart-home
     restart: always
-    user: 1001:1001
+    user: 1000:1000
     volumes:
       - ./smart-home/static:/usr/src/app/static
       - ./smart-home/logs:/usr/src/app/logs
@@ -64,7 +64,7 @@ services:
     command: celery -A home worker --beat -l info
     container_name: celery
     restart: always
-    user: 1001:1001
+    user: 1000:1000
     volumes:
       - ./smart-home/logs:/usr/src/app/logs
     env_file:
@@ -95,6 +95,7 @@ services:
     restart: always
     ports:
       - "1883:1883"
+      - "8883:8883"
     env_file:
       - ./smart-home/docker/emqx/configuration.env
       - ./.env
