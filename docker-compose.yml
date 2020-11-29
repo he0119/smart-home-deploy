@@ -40,16 +40,16 @@ services:
     build: ./blog/php
     image: he0119/php:7.4.12-fpm-alpine
     container_name: php
-    user: 500:500
+    user: 1000:1000
     restart: always
     volumes:
       - ./blog/typecho:/app/typecho
       - ./blog/php/php.ini:/usr/local/etc/php/php.ini:ro
   smart-home:
-    image: he0119/smart-home:v0.5.4
+    image: he0119/smart-home:v0.5.5
     container_name: smart-home
     restart: always
-    user: 500:500
+    user: 1000:1000
     volumes:
       - ./smart-home/static:/usr/src/app/static
       - ./smart-home/logs:/usr/src/app/logs
@@ -60,11 +60,11 @@ services:
       - emqx
       - redis
   celery:
-    image: he0119/smart-home:v0.5.4
+    image: he0119/smart-home:v0.5.5
     command: celery -A home worker --beat -l info
     container_name: celery
     restart: always
-    user: 500:500
+    user: 1000:1000
     volumes:
       - ./smart-home/logs:/usr/src/app/logs
     env_file:
