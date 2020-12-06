@@ -34,10 +34,9 @@ mkdir blog/typecho
 
     ```shell
     sudo docker-compose up smart-home
-    sudo docker exec -it smart-home sh
-    python manage.py collectstatic
-    python manage.py migrate
-    python manage.py createsuperuser
+    sudo docker exec -it smart-home python manage.py collectstatic
+    sudo docker exec -it smart-home python manage.py migrate
+    sudo docker exec -it smart-home python manage.py createsuperuser
     ```
 
 ### [Typecho](https://github.com/typecho/typecho)
