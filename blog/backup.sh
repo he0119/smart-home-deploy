@@ -3,7 +3,7 @@
 ################################
 # 作用：PostgreSQL 备份脚本，备份 typecho 数据库。
 # 版本：1.0.1，2020-07-20
-# 作者：www.typechodev.com modefid by uy_sun
+# 作者：www.typechodev.com modified by uy_sun
 ################################
 
 backup_dir="$HOME/backups/blog"
