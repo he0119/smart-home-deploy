@@ -46,7 +46,7 @@ services:
       - ./blog/typecho:/app/typecho
       - ./blog/php/php.ini:/usr/local/etc/php/php.ini:ro
   smart-home:
-    image: he0119/smart-home:v0.5.5
+    image: he0119/smart-home:v0.5.7
     container_name: smart-home
     restart: always
     user: 1000:1000
@@ -60,7 +60,7 @@ services:
       - emqx
       - redis
   celery:
-    image: he0119/smart-home:v0.5.5
+    image: he0119/smart-home:v0.5.7
     command: celery -A home worker --beat -l info
     container_name: celery
     restart: always
