@@ -86,7 +86,7 @@ services:
     container_name: redis
     restart: always
   emqx:
-    image: emqx/emqx:v4.1.2-alpine-amd64
+    image: emqx/emqx:4.2.5-alpine-amd64
     container_name: emqx
     restart: always
     ports:
