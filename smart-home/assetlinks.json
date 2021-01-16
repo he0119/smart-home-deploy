@@ -1,5 +1,5 @@
 [{
     "relation": ["delegate_permission/common.handle_all_urls"],
-    "target" : { "namespace": "android_app", "package_name": "com.hehome.home",
+    "target" : { "namespace": "android_app", "package_name": "xyz.hehome.smarthome",
                  "sha256_cert_fingerprints": ["E1:A7:5D:9B:3D:9F:1F:2E:61:55:33:79:8B:E9:44:7A:72:1F:C1:6D:93:7B:FC:51:33:42:32:65:37:EC:88:C1"] }
 }]
