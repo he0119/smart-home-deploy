@@ -9,7 +9,8 @@
 ### 建立 Docker 容器网络
 
 ```shell
-sudo docker network create website
+sudo docker network create --ipv6 --subnet "fd00::/80" website
+sudo ip6tables -t nat -A POSTROUTING -s fd00::/80 ! -o docker0 -j MASQUERADE
 ```
 
 ### 配置
