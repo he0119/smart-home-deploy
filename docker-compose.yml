@@ -22,6 +22,9 @@ services:
     depends_on:
       - php
       - smart-home
+    networks:
+      default:
+        ipv4_address: 172.20.0.255
   acme.sh:
     image: neilpang/acme.sh
     container_name: acme.sh
@@ -96,5 +99,11 @@ services:
       - ./.env
 networks:
   default:
-    external:
-      name: website
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+        - subnet: fd00::/80
