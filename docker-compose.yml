@@ -22,9 +22,6 @@ services:
     depends_on:
       - php
       - smart-home
-    networks:
-      default:
-        ipv4_address: 172.20.0.255
   acme.sh:
     image: neilpang/acme.sh
     container_name: acme.sh
