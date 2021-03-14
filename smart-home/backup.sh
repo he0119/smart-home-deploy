@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ################################
-# 作用：PostgreSQL 备份脚本，备份 smart-home 数据库。
-# 版本：1.0.1，2020-07-20
+# 作用：PostgreSQL 备份脚本，备份 smart_home 数据库。
+# 版本：1.0.2，2021/3/14 13:11
 # 作者：www.typechodev.com modified by uy_sun
 ################################
 
@@ -15,7 +15,7 @@ function die(){
 
 # 判断备份时间是否过频
 min_time="43200" # 12小时
-flag="/tmp/last_backup_smart-home"
+flag="/tmp/last_backup_smart_home"
 last_backup="0"
 test -f $flag && last_backup="`ls -l --time-style=+%s "$flag" | awk '{print $6}'`"
 delta_time=$(expr "`date +%s`" - "$last_backup")
@@ -26,9 +26,9 @@ test "$delta_time" -lt "$min_time" && die "Time from last backup is less then $m
 test -d "$backup_dir" || mkdir -p "$backup_dir" || die "Can not create backup dir"
 
 # 备份数据库
-sql_target="/tmp/smart-home.sql"
+sql_target="/tmp/smart_home.sql"
 test -f "$sql_target" && rm "$sql_target"
-sudo docker exec postgres pg_dump --exclude-table-data=iot_*data -U postgres smart-home > $sql_target
+sudo docker exec postgres pg_dump --exclude-table-data=iot_*data -U postgres smart_home > $sql_target
 md5sum "$sql_target" > "$sql_target.md5sum"
 
 # 打包
