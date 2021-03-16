@@ -74,7 +74,7 @@ services:
       - redis
   db:
     build: ./postgres
-    image: he0119/postgres:12.3
+    image: he0119/postgres:13.2
     container_name: postgres
     restart: always
     volumes:

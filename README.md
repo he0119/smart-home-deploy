@@ -6,7 +6,9 @@
 
 利用 Docker 运行程序
 
-### 转发 Docker 容器网络
+### IPv6
+
+转发 Docker 容器网络
 
 ```shell
 sudo ip6tables -t nat -A POSTROUTING -s fd00::/80 ! -o docker0 -j MASQUERADE
@@ -72,3 +74,28 @@ mkdir blog/typecho
     ```shell
     sudo docker-compose up -d
     ```
+
+## 依赖
+
+以下为智慧家庭部署所需软件
+
+- [Nginx](https://hub.docker.com/_/nginx)
+- [acme.sh](https://hub.docker.com/r/neilpang/acme.sh)
+- [EMQX](https://hub.docker.com/r/emqx/emqx)
+- [PostgreSQL](https://hub.docker.com/_/postgres)
+- [redis](https://hub.docker.com/_/redis)
+- [PHP](https://hub.docker.com/_/php)
+- [typecho](https://github.com/typecho/typecho)
+
+### PostgreSQL
+
+升级步骤
+
+```shell
+# 备份
+sudo docker exec postgres pg_dumpall -U postgres > backup.sql
+# 复制备份文件进容器
+sudo docker cp backup.sql postgres:/backup.sql
+# 恢复
+sudo docker exec postgres psql -U postgres -f /backup.sql
+```
