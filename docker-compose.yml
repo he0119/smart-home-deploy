@@ -1,4 +1,3 @@
-version: "3"
 services:
   nginx:
     build: ./nginx
@@ -57,9 +56,12 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - db
-      - emqx
-      - redis
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   celery:
     image: he0119/smart-home:v0.7.3
     command: celery -A home worker --beat -l info
@@ -71,8 +73,13 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - redis
-  db:
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  postgres:
     build: ./postgres
     image: he0119/postgres:13.2
     container_name: postgres
@@ -81,10 +88,20 @@ services:
       - ./postgres/pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
     image: redis:6.0.9-alpine
     container_name: redis
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   emqx:
     image: emqx/emqx:4.2.8-alpine-amd64
     container_name: emqx
@@ -94,6 +111,11 @@ services:
     env_file:
       - ./emqx/configuration.env
       - ./.env
+    healthcheck:
+      test: "netstat -an | grep 1883 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 networks:
   default:
     driver: bridge
