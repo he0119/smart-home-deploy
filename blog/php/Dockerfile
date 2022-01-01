@@ -1,6 +1,6 @@
-FROM php:7.4.12-fpm-alpine
+FROM php:8.1.1-fpm-alpine
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencentyun.com/g' /etc/apk/repositories
+RUN sed -i 's#https://dl-cdn.alpinelinux.org#http://mirrors.tencentyun.com#g' /etc/apk/repositories
 
 RUN set -ex && \
   apk --no-cache add postgresql-dev
