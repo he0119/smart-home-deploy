@@ -116,6 +116,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
 networks:
   default:
     driver: bridge
