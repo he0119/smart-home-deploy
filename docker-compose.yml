@@ -81,7 +81,7 @@ services:
         condition: service_healthy
   postgres:
     build: ./postgres
-    image: he0119/postgres:13.2
+    image: he0119/postgres:13.6
     container_name: postgres
     restart: always
     volumes:
