@@ -11,6 +11,7 @@ nginx/logs
 
 # 博客
 blog/typecho
+blog/usr
 
 # 智慧家庭
 smart-home/.env

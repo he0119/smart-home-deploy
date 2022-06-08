@@ -10,7 +10,6 @@ services:
       - "443:443"
     restart: always
     volumes:
-      - ./blog/typecho:/app/typecho
       - ./smart-home/static:/app/smart-home/static
       - ./smart-home/web:/app/smart-home/web
       - ./smart-home/assetlinks.json:/app/smart-home/web/.well-known/assetlinks.json
@@ -19,7 +18,7 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl
       - ./nginx/logs:/var/log/nginx
     depends_on:
-      - php
+      - typecho
       - smart-home
   acme.sh:
     image: neilpang/acme.sh
@@ -36,15 +35,22 @@ services:
       - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="nginx -s reload"
     depends_on:
       - nginx
-  php:
-    build: ./blog/php
-    image: he0119/php:8.1.1-fpm-alpine
-    container_name: php
-    user: 1000:1000
+  typecho:
+    image: joyqi/typecho:1.2.0-php8.0-apache
+    container_name: typecho
     restart: always
     volumes:
-      - ./blog/typecho:/app/typecho
-      - ./blog/php/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./blog/usr:/app/usr
+    environment:
+      - TYPECHO_SITE_URL=https://hehome.xyz
+      - TYPECHO_INSTALL=1
+      - TIMEZONE=Asia/Shanghai
+      - MEMORY_LIMIT=100m
+      - MAX_POST_BODY=50m
+      - TYPECHO_DB_ADAPTER=Pdo_Pgsql
+      - TYPECHO_DB_NEXT=keep
+    env_file:
+      - ./.env
   smart-home:
     image: he0119/smart-home:v0.8.4
     container_name: smart-home
