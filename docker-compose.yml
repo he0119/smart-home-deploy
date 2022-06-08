@@ -51,6 +51,9 @@ services:
       - TYPECHO_DB_NEXT=keep
     env_file:
       - ./.env
+    depends_on:
+      postgres:
+          condition: service_healthy
   smart-home:
     image: he0119/smart-home:v0.8.4
     container_name: smart-home
