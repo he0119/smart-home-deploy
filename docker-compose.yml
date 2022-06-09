@@ -1,0 +1,141 @@
+services:
+  nginx:
+    build: ./nginx
+    image: he0119/nginx:1.21-alpine
+    container_name: nginx
+    labels:
+      - sh.acme.autoload.domain=example.com
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./blog/web:/app/typecho
+      - ./smart-home/static:/app/smart-home/static
+      - ./smart-home/web:/app/smart-home/web
+      - ./smart-home/assetlinks.json:/app/smart-home/web/.well-known/assetlinks.json
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - typecho
+      - smart-home
+  acme.sh:
+    image: neilpang/acme.sh
+    container_name: acme.sh
+    restart: always
+    command: daemon
+    volumes:
+      - ./acme.sh/acmeout:/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEPLOY_DOCKER_CONTAINER_LABEL=sh.acme.autoload.domain=example.com
+      - DEPLOY_DOCKER_CONTAINER_KEY_FILE="/etc/nginx/ssl/example.com.key"
+      - DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE="/etc/nginx/ssl/fullchain.cer"
+      - DEPLOY_DOCKER_CONTAINER_RELOAD_CMD="nginx -s reload"
+    depends_on:
+      - nginx
+  typecho:
+    image: joyqi/typecho:1.2.0-php8.0-apache
+    container_name: typecho
+    restart: always
+    volumes:
+      - ./blog/usr:/app/usr
+    environment:
+      - TYPECHO_SITE_URL=https://example.com
+      - TYPECHO_INSTALL=1
+      - TIMEZONE=Asia/Shanghai
+      - MEMORY_LIMIT=100m
+      - MAX_POST_BODY=50m
+      - TYPECHO_DB_ADAPTER=Pdo_Pgsql
+      - TYPECHO_DB_NEXT=keep
+    env_file:
+      - ./.env
+    depends_on:
+      postgres:
+          condition: service_healthy
+  smart-home:
+    image: he0119/smart-home:v0.8.4
+    container_name: smart-home
+    restart: always
+    user: 1000:1000
+    volumes:
+      - ./smart-home/static:/app/static
+      - ./smart-home/logs:/app/logs
+    env_file:
+      - ./.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  celery:
+    image: he0119/smart-home:v0.8.4
+    command: celery -A home worker --beat -l info
+    container_name: celery
+    restart: always
+    user: 1000:1000
+    volumes:
+      - ./smart-home/logs:/app/logs
+    env_file:
+      - ./.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  postgres:
+    build: ./postgres
+    image: he0119/postgres:14.3
+    container_name: postgres
+    restart: always
+    volumes:
+      - ./postgres/pgdata:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:6.2
+    container_name: redis
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  emqx:
+    image: emqx/emqx:4.2.8-alpine-amd64
+    container_name: emqx
+    restart: always
+    ports:
+      - "1883:1883"
+    env_file:
+      - ./emqx/configuration.env
+      - ./.env
+    healthcheck:
+      test: "netstat -an | grep 1883 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+networks:
+  default:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+        - subnet: fd00::/80

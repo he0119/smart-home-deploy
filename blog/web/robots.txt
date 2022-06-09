@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /install/
+Disallow: /var/
+Disallow: /config.inc.php
+Disallow: /install.php
+Sitemap: https://example.com/sitemap.xml

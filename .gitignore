@@ -1,0 +1,23 @@
+# 排除配置文件
+.env
+
+# 排除生成的文件夹
+
+# 证书文件
+acme.sh/acmeout
+nginx/ssl
+# 日志
+nginx/logs
+
+# 博客
+blog/typecho
+blog/usr
+
+# 智慧家庭
+smart-home/.env
+smart-home/logs
+smart-home/static
+smart-home/web
+
+# 数据库
+postgres/pgdata
