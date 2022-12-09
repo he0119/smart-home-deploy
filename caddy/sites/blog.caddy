@@ -1,0 +1,12 @@
+example.com {
+	# 日志
+	import LOG "/data/logs/example.com.log"
+	# 通用配置
+	import COMMON_CONFIG
+
+	root * /srv/typecho
+	file_server
+
+	@notStatic not file
+	reverse_proxy @notStatic typecho:80
+}

@@ -25,8 +25,9 @@ vi .env
 ### 创建文件夹
 
 ```shell
-mkdir smart-home/logs
 mkdir smart-home/static
+mkdir smart-home/logs
+mkdir smart-home/geoip
 ```
 
 ### [智慧家庭](https://github.com/he0119/smart-home)
@@ -35,8 +36,6 @@ mkdir smart-home/static
 
     ```shell
     sudo docker-compose up smart-home
-    sudo docker exec smart-home python manage.py collectstatic
-    sudo docker exec smart-home python manage.py migrate
     sudo docker exec -it smart-home python manage.py createsuperuser
     ```
 
@@ -49,18 +48,7 @@ mkdir smart-home/static
     create database typecho;
     ```
 
-### Nginx
-
-1. 先申请证书
-
-    注释 docker-compose.yml 中这两行
-
-    ```yml
-    # - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    # - ./nginx/sites:/etc/nginx/conf.d:ro
-    ```
-
-    填写并运行 `./acme.sh/issue-and-deploy-ssl-key.sh`
+### Caddy
 
 1. 启动服务器
 
@@ -72,9 +60,7 @@ mkdir smart-home/static
 
 以下为智慧家庭部署所需软件
 
-- [Nginx](https://hub.docker.com/_/nginx)
-- [acme.sh](https://hub.docker.com/r/neilpang/acme.sh)
-- [EMQX](https://hub.docker.com/r/emqx/emqx)
+- [Caddy](https://hub.docker.com/_/caddy)
 - [PostgreSQL](https://hub.docker.com/_/postgres)
 - [redis](https://hub.docker.com/_/redis)
 - [typecho](https://hub.docker.com/r/joyqi/typecho)

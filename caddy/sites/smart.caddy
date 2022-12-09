@@ -1,0 +1,28 @@
+smart.example.com {
+	# 日志
+	import LOG "/data/logs/smart.example.com.log"
+	# 通用配置
+	import COMMON_CONFIG
+
+	@api {
+		path_regexp ^/(graphql|api|admin)
+	}
+	@static {
+		path_regexp ^/(static)
+	}
+
+	handle {
+		root * /srv/smart-home/web
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle @api {
+		reverse_proxy smart-home:8000
+	}
+
+	handle @static {
+		root * /srv/smart-home
+		file_server
+	}
+}

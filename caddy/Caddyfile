@@ -1,0 +1,38 @@
+# 参考
+# https://mritd.com/2021/01/07/lets-start-using-caddy2/
+(LOG) {
+	# https://caddyserver.com/docs/caddyfile/directives/log
+	log {
+		output file "{args.0}" {
+			roll_size 5mb
+		}
+	}
+}
+
+(HSTS) {
+	header / Strict-Transport-Security "max-age=63072000"
+}
+
+(headerz) {
+	header {
+		-server
+		-Link
+		-X-Powered-By
+	}
+}
+
+# 聚合上面的配置片段为新的片段
+# https://caddyserver.com/docs/caddyfile/concepts#snippets
+(COMMON_CONFIG) {
+	# 支持压缩
+	encode zstd gzip
+
+	# HSTS
+	import HSTS
+
+	# 删除 server 相关的头
+	import headerz
+}
+
+# 引入其他具体的站点配置
+import /etc/caddy/sites/*.caddy
